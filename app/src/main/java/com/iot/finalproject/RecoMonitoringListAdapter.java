@@ -1,4 +1,4 @@
-/**
+package com.iot.finalproject; /**
  * The MIT License (MIT)
  *
  * Copyright (c) 2014-2015 Perples, Inc.
@@ -29,7 +29,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.iot.finalproject.R;
 import com.perples.recosdk.RECOBeaconRegion;
 import com.perples.recosdk.RECOBeaconRegionState;
 

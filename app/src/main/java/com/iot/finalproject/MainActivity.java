@@ -253,11 +253,11 @@ public class MainActivity extends Activity {
 //        ToggleButton toggle = (ToggleButton)v;
 //        if(toggle.isChecked()) {
 //            Log.i("MainActivity", "onMonitoringToggleButtonClicked off to on");
-//            Intent intent = new Intent(this, RecoBackgroundMonitoringService.class);
+//            Intent intent = new Intent(this, com.iot.finalproject.RecoBackgroundMonitoringService.class);
 //            startService(intent);
 //        } else {
 //            Log.i("MainActivity", "onMonitoringToggleButtonClicked on to off");
-//            stopService(new Intent(this, RecoBackgroundMonitoringService.class));
+//            stopService(new Intent(this, com.iot.finalproject.RecoBackgroundMonitoringService.class));
 //        }
 //    }
 //
@@ -265,21 +265,21 @@ public class MainActivity extends Activity {
 //        ToggleButton toggle = (ToggleButton)v;
 //        if(toggle.isChecked()) {
 //            Log.i("MainActivity", "onRangingToggleButtonClicked off to on");
-//            Intent intent = new Intent(this, RecoBackgroundRangingService.class);
+//            Intent intent = new Intent(this, com.iot.finalproject.RecoBackgroundRangingService.class);
 //            startService(intent);
 //        } else {
 //            Log.i("MainActivity", "onRangingToggleButtonClicked on to off");
-//            stopService(new Intent(this, RecoBackgroundRangingService.class));
+//            stopService(new Intent(this, com.iot.finalproject.RecoBackgroundRangingService.class));
 //        }
 //    }
 //
 //    public void onButtonClicked(View v) {
 //        Button btn = (Button)v;
 //        if(btn.getId() == R.id.monitoringButton) {
-//            final Intent intent = new Intent(this, RecoMonitoringActivity.class);
+//            final Intent intent = new Intent(this, com.iot.finalproject.RecoMonitoringActivity.class);
 //            startActivity(intent);
 //        } else {
-//            final Intent intent = new Intent(this, RecoRangingActivity.class);
+//            final Intent intent = new Intent(this, com.iot.finalproject.RecoRangingActivity.class);
 //            startActivity(intent);
 //        }
 //    }
@@ -287,7 +287,7 @@ public class MainActivity extends Activity {
 //    private boolean isBackgroundMonitoringServiceRunning(Context context) {
 //        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
 //        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
-//            if(RecoBackgroundMonitoringService.class.getName().equals(runningService.service.getClassName())) {
+//            if(com.iot.finalproject.RecoBackgroundMonitoringService.class.getName().equals(runningService.service.getClassName())) {
 //                return true;
 //            }
 //        }
@@ -297,7 +297,7 @@ public class MainActivity extends Activity {
 //    private boolean isBackgroundRangingServiceRunning(Context context) {
 //        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
 //        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
-//            if(RecoBackgroundRangingService.class.getName().equals(runningService.service.getClassName())) {
+//            if(com.iot.finalproject.RecoBackgroundRangingService.class.getName().equals(runningService.service.getClassName())) {
 //                return true;
 //            }
 //        }

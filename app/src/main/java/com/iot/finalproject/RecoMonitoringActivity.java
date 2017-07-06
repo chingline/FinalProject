@@ -1,4 +1,4 @@
-/**
+package com.iot.finalproject; /**
  * The MIT License (MIT)
  *
  * Copyright (c) 2014-2015 Perples, Inc.
@@ -27,8 +27,6 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.iot.finalproject.R;
-import com.iot.finalproject.RecoActivity;
 import com.perples.recosdk.RECOBeacon;
 import com.perples.recosdk.RECOBeaconRegion;
 import com.perples.recosdk.RECOBeaconRegionState;

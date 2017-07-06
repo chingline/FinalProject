@@ -1,7 +1,8 @@
+package com.iot.finalproject;
+
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.iot.finalproject.MainActivity;
 import com.perples.recosdk.RECOBeaconManager;
 import com.perples.recosdk.RECOBeaconRegion;
 import com.perples.recosdk.RECOServiceConnectListener;
