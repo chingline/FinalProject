@@ -1,13 +1,21 @@
 package com.iot.finalproject;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -23,6 +31,39 @@ public class MainActivity extends Activity {
 
         initLayout();
         initData();
+
+        
+        
+                //If a user device turns off bluetooth, request to turn it on.
+        //사용자가 블루투스를 켜도록 요청합니다.
+        mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+        if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
+        }
+
+        /**
+         * In order to use RECO SDK for Android API 23 (Marshmallow) or higher,
+         * the location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is required.
+         * Please refer to the following permission guide and sample code provided by Google.
+         *
+         * 안드로이드 API 23 (마시멜로우)이상 버전부터, 정상적으로 RECO SDK를 사용하기 위해서는
+         * 위치 권한 (ACCESS_COARSE_LOCATION 혹은 ACCESS_FINE_LOCATION)을 요청해야 합니다.
+         * 권한 요청의 경우, 구글에서 제공하는 가이드를 참고하시기 바랍니다.
+         *
+         * http://www.google.com/design/spec/patterns/permissions.html
+         * https://github.com/googlesamples/android-RuntimePermissions
+         */
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.i("recoLog", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is not granted.");
+                this.requestLocationPermission();
+            } else {
+                Log.i("recoLog", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is already granted.");
+            }
+        }
     }
 
     /**
@@ -160,10 +201,10 @@ public class MainActivity extends Activity {
 //         */
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //            if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is not granted.");
+//                Log.i("recoLog", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is not granted.");
 //                this.requestLocationPermission();
 //            } else {
-//                Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is already granted.");
+//                Log.i("recoLog", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is already granted.");
 //            }
 //        }
 //    }
@@ -179,27 +220,27 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch(requestCode) {
-//            case REQUEST_LOCATION : {
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Snackbar.make(mLayout, R.string.location_permission_granted, Snackbar.LENGTH_LONG).show();
-//                } else {
-//                    Snackbar.make(mLayout, R.string.location_permission_not_granted, Snackbar.LENGTH_LONG).show();
-//                }
-//            }
-//            default :
-//                break;
-//        }
-//
-//
-//    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch(requestCode) {
+            case REQUEST_LOCATION : {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Snackbar.make(mLayout, R.string.location_permission_granted, Snackbar.LENGTH_LONG).show();
+                } else {
+                    Snackbar.make(mLayout, R.string.location_permission_not_granted, Snackbar.LENGTH_LONG).show();
+                }
+            }
+            default :
+                break;
+        }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
 //        if(this.isBackgroundMonitoringServiceRunning(this)) {
 //            ToggleButton toggle = (ToggleButton)findViewById(R.id.backgroundMonitoringToggleButton);
 //            toggle.setChecked(true);
@@ -209,7 +250,7 @@ public class MainActivity extends Activity {
 //            ToggleButton toggle = (ToggleButton)findViewById(R.id.backgroundRangingToggleButton);
 //            toggle.setChecked(true);
 //        }
-//    }
+    }
 
     @Override
     protected void onDestroy() {
@@ -233,30 +274,31 @@ public class MainActivity extends Activity {
      * 당사에서는 ACCESS_COARSE_LOCATION 권한을 권장합니다.
      *
      */
-//    private void requestLocationPermission() {
-//        if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-//            return;
-//        }
-//
-//        Snackbar.make(mLayout, R.string.location_permission_rationale, Snackbar.LENGTH_INDEFINITE)
-//                .setAction(R.string.ok, new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-//                    }
-//                })
-//                .show();
-//    }
+    private void requestLocationPermission() {
+        if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+            return;
+        }
+
+        Snackbar.make(mLayout, R.string.location_permission_rationale, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+                    }
+                })
+                .show();
+    }
+
 //
 //    public void onMonitoringToggleButtonClicked(View v) {
 //        ToggleButton toggle = (ToggleButton)v;
 //        if(toggle.isChecked()) {
-//            Log.i("MainActivity", "onMonitoringToggleButtonClicked off to on");
+//            Log.i("recoLog", "onMonitoringToggleButtonClicked off to on");
 //            Intent intent = new Intent(this, com.iot.finalproject.RecoBackgroundMonitoringService.class);
 //            startService(intent);
 //        } else {
-//            Log.i("MainActivity", "onMonitoringToggleButtonClicked on to off");
+//            Log.i("recoLog", "onMonitoringToggleButtonClicked on to off");
 //            stopService(new Intent(this, com.iot.finalproject.RecoBackgroundMonitoringService.class));
 //        }
 //    }
@@ -264,11 +306,11 @@ public class MainActivity extends Activity {
 //    public void onRangingToggleButtonClicked(View v) {
 //        ToggleButton toggle = (ToggleButton)v;
 //        if(toggle.isChecked()) {
-//            Log.i("MainActivity", "onRangingToggleButtonClicked off to on");
+//            Log.i("recoLog", "onRangingToggleButtonClicked off to on");
 //            Intent intent = new Intent(this, com.iot.finalproject.RecoBackgroundRangingService.class);
 //            startService(intent);
 //        } else {
-//            Log.i("MainActivity", "onRangingToggleButtonClicked on to off");
+//            Log.i("recoLog", "onRangingToggleButtonClicked on to off");
 //            stopService(new Intent(this, com.iot.finalproject.RecoBackgroundRangingService.class));
 //        }
 //    }
@@ -283,25 +325,25 @@ public class MainActivity extends Activity {
 //            startActivity(intent);
 //        }
 //    }
-//
-//    private boolean isBackgroundMonitoringServiceRunning(Context context) {
-//        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-//        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
-//            if(com.iot.finalproject.RecoBackgroundMonitoringService.class.getName().equals(runningService.service.getClassName())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    private boolean isBackgroundRangingServiceRunning(Context context) {
-//        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-//        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
-//            if(com.iot.finalproject.RecoBackgroundRangingService.class.getName().equals(runningService.service.getClassName())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+
+    private boolean isBackgroundMonitoringServiceRunning(Context context) {
+        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
+            if(com.iot.finalproject.RecoBackgroundMonitoringService.class.getName().equals(runningService.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isBackgroundRangingServiceRunning(Context context) {
+        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
+            if(com.iot.finalproject.RecoBackgroundRangingService.class.getName().equals(runningService.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

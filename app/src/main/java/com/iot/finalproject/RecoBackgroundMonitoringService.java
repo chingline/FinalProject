@@ -174,10 +174,10 @@ public class RecoBackgroundMonitoringService extends Service implements RECOMoni
     @Override
     public void onServiceConnect() {
         Log.i("BackMonitoringService", "onServiceConnect()");
+        Toast.makeText(this, "reco connected", Toast.LENGTH_SHORT).show();
         this.startMonitoring();
         //Write the code when RECOBeaconManager is bound to RECOBeaconService
 
-        Toast.makeText(this, "reco connected", Toast.LENGTH_SHORT).show();
     }
 
     @Override
