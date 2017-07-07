@@ -1,4 +1,6 @@
-package com.iot.finalproject; /**
+package com.iot.finalproject;
+
+/**
  * The MIT License (MIT)
  *
  * Copyright (c) 2014-2015 Perples, Inc.
@@ -23,9 +25,13 @@ package com.iot.finalproject; /**
  */
 
 
+import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
@@ -107,19 +113,26 @@ public class RecoBackgroundMonitoringService extends Service implements RECOMoni
     private void bindRECOService() {
         Log.i("BackMonitoringService", "bindRECOService()");
 
-        mRegions = new ArrayList<RECOBeaconRegion>();
-        this.generateBeaconRegion();
+        mRegions = new ArrayList<>();
+
+        Integer UUIDMaj = 11;
+        this.generateBeaconRegion(UUIDMaj, 111, "1");
+        this.generateBeaconRegion(UUIDMaj, 112, "2");
+        this.generateBeaconRegion(UUIDMaj, 113, "3");
+        this.generateBeaconRegion(UUIDMaj, 114, "4");
+        this.generateBeaconRegion(UUIDMaj, 115, "5");
+        this.generateBeaconRegion(UUIDMaj, 116, "6");
 
         mRecoManager.setMonitoringListener(this);
         mRecoManager.bind(this);
     }
 
-    private void generateBeaconRegion() {
+    private void generateBeaconRegion(Integer maj, Integer mir, String RegsionId) {
         Log.i("BackMonitoringService", "generateBeaconRegion()");
 
         RECOBeaconRegion recoRegion;
 
-        recoRegion = new RECOBeaconRegion(MainActivity.RECO_UUID, "RECO Sample Region");
+        recoRegion = new RECOBeaconRegion(MainActivity.RECO_UUID, maj, mir, RegsionId);
         recoRegion.setRegionExpirationTimeMillis(mRegionExpirationTime);
         mRegions.add(recoRegion);
     }
@@ -142,6 +155,59 @@ public class RecoBackgroundMonitoringService extends Service implements RECOMoni
             }
         }
     }
+
+    ////////////////////
+    ////////////////////
+    ////////////////////
+
+    private void showMessage(Context context, String title, String msg, String ticker, String code) {
+//비콘 신호 수신시 메시지 전송....
+        NotificationManager mManager = (NotificationManager)context.getSystemService(Activity.NOTIFICATION_SERVICE);
+        PendingIntent pendingIntent ;
+        int notifyID= (int)java.lang.System.currentTimeMillis();
+        pendingIntent = PendingIntent.getActivity(
+                context,
+                notifyID,
+                new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("code",code),
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        NotificationCompat.Builder mBuilder;
+        android.support.v4.app.NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
+        style.setBigContentTitle(title).bigText(msg);
+        java.lang.System.currentTimeMillis();
+
+        mBuilder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.b)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)//선택하면 사라진다.
+                .setTicker(ticker)
+                .setVibrate(new long[]{500, 500})
+                .setStyle(style);
+
+        mManager.notify(notifyID, mBuilder.build());
+    }
+
+    public String todayDateTime() {
+        //오늘 일자 반환..
+        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+        Date current = new Date();
+        String date = formater.format(current);
+        String nowDate = date;
+        return nowDate;
+    }
+
+    private String getRecoRegTime() {
+        // 비콘을 읽은 일자를 SharedPreferences에서 읽어 온다.
+        SharedPreferences prefs = getSharedPreferences(MainActivity.APP_NBAME, 0);
+
+        String regTime ="";
+        regTime = prefs.getString(MainActivity.RECO_REG_TIME, "");
+        if (regTime.isEmpty()) return "";
+        else return regTime;
+    }
+    ////////////////////
+    ////////////////////
+    ////////////////////
 
     private void stopMonitoring() {
         Log.i("BackMonitoringService", "stopMonitoring()");
@@ -184,6 +250,7 @@ public class RecoBackgroundMonitoringService extends Service implements RECOMoni
     public void didDetermineStateForRegion(RECOBeaconRegionState state, RECOBeaconRegion region) {
         Log.i("BackMonitoringService", "didDetermineStateForRegion()");
         //Write the code when the state of the monitored region is changed
+        Toast.makeText(this, "didDetermineStateForRegion", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -198,8 +265,22 @@ public class RecoBackgroundMonitoringService extends Service implements RECOMoni
 
         //Get the region and found beacon list in the entered region
         Log.i("BackMonitoringService", "didEnterRegion() - " + region.getUniqueIdentifier());
-        this.popupNotification("Inside of " + region.getUniqueIdentifier());
+//        this.popupNotification("Inside of " + region.getUniqueIdentifier());
         //Write the code when the device is enter the region
+
+        String recoRegTime = getRecoRegTime();
+        String todayTime = todayDateTime();
+
+        Toast.makeText(this, todayTime + " didEnterRegion", Toast.LENGTH_SHORT).show();
+
+//        if(!recoRegTime.equals(todayTime)) {
+////오늘 비콘 신호를 처음 읽는 다면
+//            showMessage(this,"제목","내용", "Ticket", "구분값");
+//        }
+//        else
+//        {
+//            showMessage(this,"제목","오늘 들어 왔다.", "Ticket", "구분값");
+//        }
     }
 
     @Override
@@ -213,23 +294,30 @@ public class RecoBackgroundMonitoringService extends Service implements RECOMoni
          */
 
         Log.i("BackMonitoringService", "didExitRegion() - " + region.getUniqueIdentifier());
-        this.popupNotification("Outside of " + region.getUniqueIdentifier());
+//        this.popupNotification("Outside of " + region.getUniqueIdentifier());
         //Write the code when the device is exit the region
+        Toast.makeText(this, "didExitRegion", Toast.LENGTH_SHORT).show();
+        showMessage(this,"제목","didExitRegion", "Ticket", "구분값");
+
     }
 
     @Override
     public void didStartMonitoringForRegion(RECOBeaconRegion region) {
         Log.i("BackMonitoringService", "didStartMonitoringForRegion() - " + region.getUniqueIdentifier());
         //Write the code when starting monitoring the region is started successfully
+        Toast.makeText(this, "didStartMonitoringForRegion", Toast.LENGTH_SHORT).show();
+        showMessage(this,"제목","didStartMonitoringForRegion", "Ticket", "구분값");
+
     }
 
     private void popupNotification(String msg) {
         Log.i("BackMonitoringService", "popupNotification()");
         String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.KOREA).format(new Date());
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(msg + " " + currentTime)
-                .setContentText(msg);
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle(msg + " " + currentTime)
+                        .setContentText(msg);
 
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         builder.setStyle(inboxStyle);

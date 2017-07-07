@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.perples.recosdk.RECOBeacon;
 import com.perples.recosdk.RECOBeaconRegion;
@@ -117,6 +118,8 @@ public class RecoMonitoringActivity extends RecoActivity implements RECOMonitori
         Log.i("RecoMonitoringActivity", "didDetermineStateForRegion()");
         Log.i("RecoMonitoringActivity", "region: " + recoRegion.getUniqueIdentifier() + ", state: " + recoRegionState.toString());
 
+        Toast.makeText(this, "didDetermineStateForRegion", Toast.LENGTH_SHORT).show();
+
         if(mInitialSetting) {
             mMonitoringListAdapter.updateRegion(recoRegion, recoRegionState, 0, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(new Date()));
             mMonitoringListAdapter.notifyDataSetChanged();
@@ -136,6 +139,7 @@ public class RecoMonitoringActivity extends RecoActivity implements RECOMonitori
          * didDetermineStateForRegion() 콜백 메소드를 통해 region 상태를 확인할 수 있습니다.
          */
 
+        Toast.makeText(this, "didEnterRegion", Toast.LENGTH_SHORT).show();
         //Get the region and found beacon list in the entered region
         Log.i("RecoMonitoringActivity", "didEnterRegion() region:" + recoRegion.getUniqueIdentifier());
 
@@ -154,6 +158,8 @@ public class RecoMonitoringActivity extends RecoActivity implements RECOMonitori
          * didDetermineStateForRegion() 콜백 메소드를 통해 region 상태를 확인할 수 있습니다.
          */
 
+        Toast.makeText(this, "didExitRegion", Toast.LENGTH_SHORT).show();
+
         Log.i("RecoMonitoringActivity", "didExitRegion() region:" + recoRegion.getUniqueIdentifier());
 
         mMonitoringListAdapter.updateRegion(recoRegion, RECOBeaconRegionState.RECOBeaconRegionOutside, 0, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(new Date()));
@@ -163,6 +169,8 @@ public class RecoMonitoringActivity extends RecoActivity implements RECOMonitori
 
     @Override
     public void didStartMonitoringForRegion(RECOBeaconRegion recoRegion) {
+        Toast.makeText(this, "didStartMonitoringForRegion", Toast.LENGTH_SHORT).show();
+
         Log.i("RecoMonitoringActivity", "didStartMonitoringForRegion: " + recoRegion.getUniqueIdentifier());
         //Write the code when starting monitoring the region is started successfully
     }

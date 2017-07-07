@@ -25,7 +25,6 @@
         </activity>
         <service android:name="com.perples.recosdk.RECOBeaconService" />
         <service android:name=".RecoBackgroundMonitoringService" />
-        <service android:name=".RecoBackgroundRangingService"/>
 
 
     </application>

@@ -31,10 +31,8 @@ public class MainActivity extends Activity {
 
         initLayout();
         initData();
-
         
-        
-                //If a user device turns off bluetooth, request to turn it on.
+        //If a user device turns off bluetooth, request to turn it on.
         //사용자가 블루투스를 켜도록 요청합니다.
         mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
@@ -64,6 +62,15 @@ public class MainActivity extends Activity {
                 Log.i("recoLog", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is already granted.");
             }
         }
+        //pop bt & location connect notification
+
+        RecoeBackgroundStart();
+    }
+
+    private void RecoeBackgroundStart() {
+        Log.i("BackMonitoringService", "2");
+        Intent intent = new Intent(this, RecoBackgroundMonitoringService.class);
+        startService(intent);
     }
 
     /**
@@ -99,6 +106,7 @@ public class MainActivity extends Activity {
 
     //This is a default proximity uuid of the RECO
     public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
+    public static final String UIDNameSpace = "24DDF411-8CF1-440C-87CD-";
 
     /**
      * SCAN_RECO_ONLY:
@@ -146,6 +154,9 @@ public class MainActivity extends Activity {
 
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
+
+    public static final String RECO_REG_TIME = "registration_reco_time";
+    public static final String APP_NBAME = "RecoBeaCon";
 
     private View mLayout;
 
@@ -330,16 +341,6 @@ public class MainActivity extends Activity {
         ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
         for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
             if(com.iot.finalproject.RecoBackgroundMonitoringService.class.getName().equals(runningService.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isBackgroundRangingServiceRunning(Context context) {
-        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
-            if(com.iot.finalproject.RecoBackgroundRangingService.class.getName().equals(runningService.service.getClassName())) {
                 return true;
             }
         }

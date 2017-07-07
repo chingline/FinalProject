@@ -103,7 +103,7 @@ public class RecoMonitoringListAdapter extends BaseAdapter {
 
         String recoRegionUniqueID = recoRegion.getUniqueIdentifier();
         String recoRegionState = recoState.toString();
-        String recoUpdateTime = mLastUpdateTime.get(recoRegion);
+            String recoUpdateTime = mLastUpdateTime.get(recoRegion);
         String recoBeaconCount = mMatchedBeaconCounts.get(recoRegion).toString();
 
         viewHolder.recoRegionID.setText(recoRegionUniqueID);
